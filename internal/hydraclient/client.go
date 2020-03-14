@@ -59,7 +59,12 @@ func determineError(res *http.Response) error {
 func (c Client) GetLoginRequest(challenge string) (GetLoginRequestResponse, error) {
 	params := url.Values{}
 	params.Add("login_challenge", challenge)
-	res, err := http.Get(fmt.Sprintf("%v/oauth2/auth/requests/login?%v", c.hydraPrivateURL, params.Encode()))
+	req, err := http.NewRequest("GET", fmt.Sprintf("%v/oauth2/auth/requests/login?%v", c.hydraPrivateURL, params.Encode()), nil)
+	req.Header.Set("X-Forwarded-Proto", "https")
+	if err != nil {
+		return nil, err
+	}
+	res, err := client.Do(req)
 	if err != nil {
 		return nil, err
 	}
@@ -107,6 +112,10 @@ func (c Client) AcceptLoginRequest(challenge string, remember bool, rememberFor 
 		fmt.Sprintf("%v/oauth2/auth/requests/login/accept?%v", c.hydraPrivateURL, params.Encode()),
 		bytes.NewBuffer(reqBody),
 	)
+	if err != nil {
+		return nil, err
+	}
+	req.Header.Set("X-Forwarded-Proto", "https")
 	res, err := client.Do(req)
 	if err != nil {
 		return nil, err
@@ -150,6 +159,10 @@ func (c Client) RejectLoginRequest(challenge string, errorID string, errorDescri
 		fmt.Sprintf("%v/oauth2/auth/requests/login/reject?%v", c.hydraPrivateURL, params.Encode()),
 		bytes.NewBuffer(reqBody),
 	)
+	if err != nil {
+		return nil, err
+	}
+	req.Header.Set("X-Forwarded-Proto", "https")
 	res, err := client.Do(req)
 	if err != nil {
 		return nil, err
@@ -190,7 +203,12 @@ func (c Client) GetConsentRequest(challenge string) (GetConsentRequestResponse, 
 	// using given login challenge
 	params := url.Values{}
 	params.Add("consent_challenge", challenge)
-	res, err := http.Get(fmt.Sprintf("%v/oauth2/auth/requests/consent?%v", c.hydraPrivateURL, params.Encode()))
+	req, err := http.NewRequest("GET", fmt.Sprintf("%v/oauth2/auth/requests/consent?%v", c.hydraPrivateURL, params.Encode()), nil)
+	if err != nil {
+		return nil, err
+	}
+	req.Header.Set("X-Forwarded-Proto", "https")
+	res, err := client.Do(req)
 	if err != nil {
 		return nil, err
 	}
@@ -240,6 +258,7 @@ func (c Client) AcceptConsentRequest(challenge string, remember bool, rememberFo
 		fmt.Sprintf("%v/oauth2/auth/requests/consent/accept?%v", c.hydraPrivateURL, params.Encode()),
 		bytes.NewBuffer(reqBody),
 	)
+	req.Header.Set("X-Forwarded-Proto", "https")
 	res, err := client.Do(req)
 	if err != nil {
 		return nil, err
@@ -270,7 +289,12 @@ func (c Client) GetLogoutRequest(challenge string) (GetLogoutRequestResponse, er
 	// using given login challenge
 	params := url.Values{}
 	params.Add("consent_challenge", challenge)
-	res, err := http.Get(fmt.Sprintf("%v/oauth2/auth/requests/logout?%v", c.hydraPrivateURL, params.Encode()))
+	req, err := http.NewRequest("GET", fmt.Sprintf("%v/oauth2/auth/requests/logout?%v", c.hydraPrivateURL, params.Encode()), nil)
+	if err != nil {
+		return nil, err
+	}
+	req.Header.Set("X-Forwarded-Proto", "https")
+	res, err := client.Do(req)
 	if err != nil {
 		return nil, err
 	}
@@ -306,6 +330,7 @@ func (c Client) AcceptLogoutRequest(challenge string) (AcceptLogoutRequestRespon
 		fmt.Sprintf("%v/oauth2/auth/requests/login/accept?%v", c.hydraPrivateURL, params.Encode()),
 		nil,
 	)
+	req.Header.Set("X-Forwarded-Proto", "https")
 	res, err := client.Do(req)
 	if err != nil {
 		return nil, err

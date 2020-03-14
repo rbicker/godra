@@ -12,11 +12,11 @@ RUN adduser \
     --uid "${UID}" \    
     "${USER}"
 
-WORKDIR $GOPATH/src/app/
+WORKDIR $GOPATH/src/github.com/rbicker/godra
 COPY . .
 RUN go mod download
 RUN go mod verify
-RUN GOOS=linux GOARCH=amd64 go build -ldflags="-w -s" -o /go/bin/godra-server
+RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o /go/bin/godra-server ./cmd/godra-server
 
 # ---
 

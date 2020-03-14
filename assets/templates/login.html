@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+  <head>
+      <meta name="viewport" content="width=device-width, initial-scale=1">
+      <link rel="stylesheet" type="text/css" href="public/css/style.css">
+      {{ .Stylesheet }}
+      <link rel="icon" type="image/x-icon" href="/public/favicon.ico">
+  </head>
+  <body>
+
+    <header>
+      {{ template "header"}}
+    </header>
+
+    {{ if  .Alert }}
+      <div class="alert">
+        <p>{{ .Alert }}</p>
+      </div>
+    {{ end }}
+
+    <form method="post">
+      <div class="input-container">
+        <div class="icon-container">
+        <div class="profile-solid icon"></div>
+        </div>
+        <input type="hidden" name="challenge" value="{{ .Challenge }}">
+        <input class="input-field" type="text" placeholder="Username*" name="username">
+      </div>
+      <div class="input-container">
+        <div class="icon-container">
+            <div class="lock-solid icon"></div>
+        </div>
+        <input class="input-field" type="password" placeholder="Password*" name="password">
+      </div>
+      <div class="button-container">
+        <button type="submit" class="btn btn-login" name="submit" value="login">
+            &nbsp;<i class="navigate-solid icon"></i>&nbsp;
+        </button>
+        <button type="submit" class="btn btn-cancel" name="submit" value="cancel">
+            &nbsp;<i class="remove icon"></i>&nbsp;
+        </button>
+      </div>
+    </form>
+
+    <footer>
+      {{ template "footer"}}
+    </footer>
+
+  </body>
+</html>

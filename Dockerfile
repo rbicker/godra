@@ -26,4 +26,5 @@ COPY --from=builder /etc/passwd /etc/passwd
 COPY --from=builder /etc/group /etc/group
 COPY --from=builder /go/bin/godra-server /godra-server
 USER appuser:appuser
+EXPOSE 5000
 ENTRYPOINT ["/godra-server"]

@@ -64,6 +64,9 @@ func (c Client) GetLoginRequest(challenge string) (GetLoginRequestResponse, erro
 	if err != nil {
 		return nil, err
 	}
+	client := http.Client{
+		Timeout: time.Second * 5,
+	}
 	res, err := client.Do(req)
 	if err != nil {
 		return nil, err
@@ -102,9 +105,6 @@ func (c Client) AcceptLoginRequest(challenge string, remember bool, rememberFor 
 	if err != nil {
 		return nil, err
 	}
-	client := http.Client{
-		Timeout: time.Second * 5,
-	}
 	params := url.Values{}
 	params.Add("login_challenge", challenge)
 	req, err := http.NewRequest(
@@ -116,6 +116,9 @@ func (c Client) AcceptLoginRequest(challenge string, remember bool, rememberFor 
 		return nil, err
 	}
 	req.Header.Set("X-Forwarded-Proto", "https")
+	client := http.Client{
+		Timeout: time.Second * 5,
+	}
 	res, err := client.Do(req)
 	if err != nil {
 		return nil, err
@@ -208,6 +211,9 @@ func (c Client) GetConsentRequest(challenge string) (GetConsentRequestResponse, 
 		return nil, err
 	}
 	req.Header.Set("X-Forwarded-Proto", "https")
+	client := http.Client{
+		Timeout: time.Second * 5,
+	}
 	res, err := client.Do(req)
 	if err != nil {
 		return nil, err
@@ -294,6 +300,9 @@ func (c Client) GetLogoutRequest(challenge string) (GetLogoutRequestResponse, er
 		return nil, err
 	}
 	req.Header.Set("X-Forwarded-Proto", "https")
+	client := http.Client{
+		Timeout: time.Second * 5,
+	}
 	res, err := client.Do(req)
 	if err != nil {
 		return nil, err
@@ -320,9 +329,6 @@ func (r acceptLogoutRequestResponse) GetRedirectTo() string {
 // AcceptLogoutRequest accepts the logout request
 // by responding to the hydra server.
 func (c Client) AcceptLogoutRequest(challenge string) (AcceptLogoutRequestResponse, error) {
-	client := http.Client{
-		Timeout: time.Second * 5,
-	}
 	params := url.Values{}
 	params.Add("logout_challenge", challenge)
 	req, err := http.NewRequest(
@@ -331,6 +337,9 @@ func (c Client) AcceptLogoutRequest(challenge string) (AcceptLogoutRequestRespon
 		nil,
 	)
 	req.Header.Set("X-Forwarded-Proto", "https")
+	client := http.Client{
+		Timeout: time.Second * 5,
+	}
 	res, err := client.Do(req)
 	if err != nil {
 		return nil, err

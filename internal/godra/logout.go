@@ -9,7 +9,6 @@ import (
 // All logout requests are accepted automatically.
 func (srv Server) GetLogoutHandler() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		log.Println("get logout")
 		if r.Method != "GET" {
 			w.WriteHeader(http.StatusMethodNotAllowed)
 			return
@@ -20,13 +19,12 @@ func (srv Server) GetLogoutHandler() http.HandlerFunc {
 			w.WriteHeader(http.StatusBadRequest)
 			return
 		}
-		body, err := srv.hydraclient.GetLogoutRequest(c)
+		_, err := srv.hydraclient.GetLogoutRequest(c)
 		if err != nil {
 			log.Printf("error while querying logout request: %v\n", err)
 			w.WriteHeader(http.StatusInternalServerError)
 			return
 		}
-		log.Println(body)
 		bodyAccept, err := srv.hydraclient.AcceptLogoutRequest(c)
 		http.Redirect(w, r, bodyAccept.GetRedirectTo(), http.StatusTemporaryRedirect)
 	}

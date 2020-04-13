@@ -170,6 +170,7 @@ func accept(w http.ResponseWriter, r *http.Request, srv Server, challenge string
 	if err != nil {
 		log.Printf("error while accepting login request: %v\n", err)
 		w.WriteHeader(http.StatusInternalServerError)
+		return
 	}
 	http.Redirect(w, r, body.GetRedirectTo(), http.StatusTemporaryRedirect)
 }
@@ -180,6 +181,7 @@ func reject(w http.ResponseWriter, r *http.Request, srv Server, challenge string
 	if err != nil {
 		log.Printf("error while rejecting login request: %v\n", err)
 		w.WriteHeader(http.StatusInternalServerError)
+		return
 	}
 	http.Redirect(w, r, body.GetRedirectTo(), http.StatusTemporaryRedirect)
 }

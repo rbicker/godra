@@ -42,7 +42,7 @@ func (c *Client) Get(flow, challenge string) (*http.Response, error) {
 	}
 	params := url.Values{}
 	params.Add(fmt.Sprintf("%s_challenge", flow), challenge)
-	req, err := http.NewRequest("GET", fmt.Sprintf("%s/oauth2/auth/requests/login?%s", c.hydraPrivateURL, params.Encode()), nil)
+	req, err := http.NewRequest("GET", fmt.Sprintf("%s/oauth2/auth/requests/%s?%s", c.hydraPrivateURL, flow, params.Encode()), nil)
 	if err != nil {
 		return nil, fmt.Errorf("could not create request: %w", err)
 	}
@@ -77,7 +77,7 @@ func (c *Client) Put (flow, action, challenge string, body []byte) (*http.Respon
 	params.Add(fmt.Sprintf("%s_challenge", flow), challenge)
 	req, err := http.NewRequest(
 		http.MethodPut,
-		fmt.Sprintf("%s/oauth2/auth/requests/consent/%s?%s", c.hydraPrivateURL, action, params.Encode()),
+		fmt.Sprintf("%s/oauth2/auth/requests/%s/%s?%s", c.hydraPrivateURL, flow, action, params.Encode()),
 		bytes.NewBuffer(body),
 	)
 	if err != nil {

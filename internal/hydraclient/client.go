@@ -1,12 +1,8 @@
 package hydraclient
 
 import (
-	"bytes"
 	"encoding/json"
 	"fmt"
-	"net/http"
-	"net/url"
-	"time"
 )
 
 // Client represents a hyra client.
@@ -14,14 +10,7 @@ type Client struct {
 	hydraPrivateURL string
 }
 
-// error response for all kind of flows.
-type errorResponse struct {
-	Error            string `json:"error"`
-	ErrorDescription string `json:"error_description"`
-	ErrorDebug       string `json:"error_debug"`
-	StatusCode       int    `json:"status_code"`
-}
-
+// ensure Client implements the HydraClient interface.
 var _ HydraClient = Client{}
 
 // SetHydraPrivateURL sets the hydra server's private URL.
@@ -41,40 +30,13 @@ func (r getLoginRequestResponse) GetSubject() string {
 	return r.Subject
 }
 
-// determineError extracts the error message from the
-// http response if status code is unexpected.
-func determineError(res *http.Response) error {
-	if res.StatusCode < 200 || res.StatusCode > 302 {
-		var resBody errorResponse
-		err := json.NewDecoder(res.Body).Decode(&resBody)
-		if err != nil {
-			return err
-		}
-		return fmt.Errorf("%v; %s; %s; %s", resBody.StatusCode, resBody.Error, resBody.ErrorDescription, resBody.ErrorDebug)
-	}
-	return nil
-}
-
 // GetLoginRequest queries the login request from hydra.
 func (c Client) GetLoginRequest(challenge string) (GetLoginRequestResponse, error) {
-	params := url.Values{}
-	params.Add("login_challenge", challenge)
-	req, err := http.NewRequest("GET", fmt.Sprintf("%v/oauth2/auth/requests/login?%v", c.hydraPrivateURL, params.Encode()), nil)
-	req.Header.Set("X-Forwarded-Proto", "https")
+	res, err := c.Get("login", challenge)
 	if err != nil {
-		return nil, err
-	}
-	client := http.Client{
-		Timeout: time.Second * 5,
-	}
-	res, err := client.Do(req)
-	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("receiving login request failed: %w", err)
 	}
 	defer res.Body.Close()
-	if err = determineError(res); err != nil {
-		return nil, err
-	}
 	var resBody getLoginRequestResponse
 	if err = json.NewDecoder(res.Body).Decode(&resBody); err != nil {
 		return nil, err
@@ -103,33 +65,15 @@ func (c Client) AcceptLoginRequest(challenge string, remember bool, rememberFor 
 		Subject:     subject,
 	})
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("cloud not create request body: %w", err)
 	}
-	params := url.Values{}
-	params.Add("login_challenge", challenge)
-	req, err := http.NewRequest(
-		http.MethodPut,
-		fmt.Sprintf("%v/oauth2/auth/requests/login/accept?%v", c.hydraPrivateURL, params.Encode()),
-		bytes.NewBuffer(reqBody),
-	)
+	res, err := c.Put("login", "accept", challenge, reqBody)
 	if err != nil {
-		return nil, err
-	}
-	req.Header.Set("X-Forwarded-Proto", "https")
-	client := http.Client{
-		Timeout: time.Second * 5,
-	}
-	res, err := client.Do(req)
-	if err != nil {
-		return nil, err
-	}
-	defer res.Body.Close()
-	if err = determineError(res); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("accepting login request failed: %w", err)
 	}
 	var resBody acceptLoginRequestResponse
 	if err = json.NewDecoder(res.Body).Decode(&resBody); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("could not decode response body: %w",err)
 	}
 	return resBody, nil
 }
@@ -150,33 +94,16 @@ func (c Client) RejectLoginRequest(challenge string, errorID string, errorDescri
 		"error_description": errorDescription,
 	})
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("could not create request body: %w", err)
 	}
-	client := http.Client{
-		Timeout: time.Second * 5,
-	}
-	params := url.Values{}
-	params.Add("login_challenge", challenge)
-	req, err := http.NewRequest(
-		http.MethodPut,
-		fmt.Sprintf("%v/oauth2/auth/requests/login/reject?%v", c.hydraPrivateURL, params.Encode()),
-		bytes.NewBuffer(reqBody),
-	)
+	res, err := c.Put("login", "reject", challenge, reqBody)
 	if err != nil {
-		return nil, err
-	}
-	req.Header.Set("X-Forwarded-Proto", "https")
-	res, err := client.Do(req)
-	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("rejecting login request failed: %w", err)
 	}
 	defer res.Body.Close()
-	if err = determineError(res); err != nil {
-		return nil, err
-	}
 	var resBody rejectLoginRequestResponse
 	if err = json.NewDecoder(res.Body).Decode(&resBody); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("could not decode response body: %w", err)
 	}
 	return resBody, nil
 }
@@ -204,27 +131,14 @@ func (r getConsentRequestResponse) GetRequestedAccessTokenAudience() []string {
 func (c Client) GetConsentRequest(challenge string) (GetConsentRequestResponse, error) {
 	// query consent request information from hydra
 	// using given login challenge
-	params := url.Values{}
-	params.Add("consent_challenge", challenge)
-	req, err := http.NewRequest("GET", fmt.Sprintf("%v/oauth2/auth/requests/consent?%v", c.hydraPrivateURL, params.Encode()), nil)
+	res, err := c.Get("consent", challenge)
 	if err != nil {
-		return nil, err
-	}
-	req.Header.Set("X-Forwarded-Proto", "https")
-	client := http.Client{
-		Timeout: time.Second * 5,
-	}
-	res, err := client.Do(req)
-	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("receiving consent request failed: %w", err)
 	}
 	defer res.Body.Close()
-	if err = determineError(res); err != nil {
-		return nil, err
-	}
 	var resBody getConsentRequestResponse
 	if err = json.NewDecoder(res.Body).Decode(&resBody); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("could not decode response body: %w", err)
 	}
 	return resBody, nil
 }
@@ -252,33 +166,17 @@ func (c Client) AcceptConsentRequest(challenge string, remember bool, rememberFo
 		GrantAccessTokenAudience: grantAccessTokenAudience,
 	})
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("cloud not create request body: %w", err)
 	}
-	client := http.Client{
-		Timeout: time.Second * 5,
-	}
-	params := url.Values{}
-	params.Add("consent_challenge", challenge)
-	req, err := http.NewRequest(
-		http.MethodPut,
-		fmt.Sprintf("%v/oauth2/auth/requests/consent/accept?%v", c.hydraPrivateURL, params.Encode()),
-		bytes.NewBuffer(reqBody),
-	)
-	req.Header.Set("X-Forwarded-Proto", "https")
-	res, err := client.Do(req)
+	res, err := c.Put("consent", "accept", challenge, reqBody)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("accepting consent request failed: %w", err)
 	}
-	defer res.Body.Close()
-	if err = determineError(res); err != nil {
-		return nil, err
+	var resBody acceptConsentRequestResponse
+	if err = json.NewDecoder(res.Body).Decode(&resBody); err != nil {
+		return nil, fmt.Errorf("could not decode response body: %w",err)
 	}
-	var body acceptConsentRequestResponse
-
-	if err = json.NewDecoder(res.Body).Decode(&body); err != nil {
-		return nil, err
-	}
-	return body, nil
+	return resBody, nil
 }
 
 type getLogoutRequestResponse struct {
@@ -293,25 +191,12 @@ func (r getLogoutRequestResponse) GetSubject() string {
 func (c Client) GetLogoutRequest(challenge string) (GetLogoutRequestResponse, error) {
 	// query logout request information from hydra
 	// using given login challenge
-	params := url.Values{}
-	params.Add("consent_challenge", challenge)
-	req, err := http.NewRequest("GET", fmt.Sprintf("%v/oauth2/auth/requests/logout?%v", c.hydraPrivateURL, params.Encode()), nil)
+	res, err := c.Get("logout", challenge)
 	if err != nil {
-		return nil, err
-	}
-	req.Header.Set("X-Forwarded-Proto", "https")
-	client := http.Client{
-		Timeout: time.Second * 5,
-	}
-	res, err := client.Do(req)
-	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("receiving logout request failed: %w", err)
 	}
 	defer res.Body.Close()
-	if err = determineError(res); err != nil {
-		return nil, err
-	}
-	var resBody GetLogoutRequestResponse
+	var resBody getLogoutRequestResponse
 	if err = json.NewDecoder(res.Body).Decode(&resBody); err != nil {
 		return nil, err
 	}
@@ -329,28 +214,13 @@ func (r acceptLogoutRequestResponse) GetRedirectTo() string {
 // AcceptLogoutRequest accepts the logout request
 // by responding to the hydra server.
 func (c Client) AcceptLogoutRequest(challenge string) (AcceptLogoutRequestResponse, error) {
-	params := url.Values{}
-	params.Add("logout_challenge", challenge)
-	req, err := http.NewRequest(
-		http.MethodPut,
-		fmt.Sprintf("%v/oauth2/auth/requests/login/accept?%v", c.hydraPrivateURL, params.Encode()),
-		nil,
-	)
-	req.Header.Set("X-Forwarded-Proto", "https")
-	client := http.Client{
-		Timeout: time.Second * 5,
-	}
-	res, err := client.Do(req)
+	res, err := c.Put("logout", "accept", challenge, nil)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("accepting logout request failed: %w", err)
 	}
-	defer res.Body.Close()
-	if err = determineError(res); err != nil {
-		return nil, err
-	}
-	var resBody acceptLogoutRequestResponse
+	var resBody acceptConsentRequestResponse
 	if err = json.NewDecoder(res.Body).Decode(&resBody); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("could not decode response body: %w",err)
 	}
 	return resBody, nil
 }

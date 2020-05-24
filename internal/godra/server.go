@@ -7,7 +7,6 @@ import (
 	"os"
 	"time"
 
-	"github.com/pkg/errors"
 	"github.com/rbicker/godra/internal/db"
 	"github.com/rbicker/godra/internal/hydraclient"
 	"github.com/rbicker/nogo"
@@ -37,19 +36,13 @@ func NewServer(opts ...func(*Server) error) (*Server, error) {
 	for _, op := range opts {
 		err := op(&srv)
 		if err != nil {
-			return nil, errors.Wrap(
-				err,
-				"setting server option failed",
-			)
+			return nil, fmt.Errorf("setting server option failed: %w", err)
 		}
 	}
 	if srv.db == nil {
 		db, err := db.NewMongoConnection()
 		if err != nil {
-			return nil, errors.Wrap(
-				err,
-				"creating new mongo db connection failed",
-			)
+			return nil, fmt.Errorf("creating new mongo db connection failed: %w", err)
 		}
 		srv.db = db
 	}

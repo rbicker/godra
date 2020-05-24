@@ -2,9 +2,9 @@ package db
 
 import (
 	"context"
+	"fmt"
 	"time"
 
-	"github.com/pkg/errors"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"go.mongodb.org/mongo-driver/mongo/readpref"
@@ -47,10 +47,7 @@ func NewMongoConnection(opts ...func(*MGO) error) (Database, error) {
 	for _, op := range opts {
 		err := op(&m)
 		if err != nil {
-			return nil, errors.Wrap(
-				err,
-				"setting option failed",
-			)
+			return nil, fmt.Errorf("setting option failed: %w", err)
 		}
 	}
 	return m, nil

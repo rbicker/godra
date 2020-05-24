@@ -73,7 +73,7 @@ func renderLoginForm(w http.ResponseWriter, challenge string, alert string) {
 // and expects to receive a login_challenge as
 // query parameter. It shows a login page if necessary
 // or redirects the browser back to hydra.
-// The POST request expects to receive a username
+// The POST request expects to receive a mail address
 // and a password in the body. If the login with
 // the given credentials is successful, a request
 // to hydra's accept endpoint will be sent. Otherwise,
@@ -132,7 +132,7 @@ func handleGet(w http.ResponseWriter, r *http.Request, srv Server) {
 }
 
 // handle login request
-// The function receives a username and password, sent by a form.
+// The function receives a mail and password, sent by a form.
 // It verifies the login and does either an accept or a reject.
 func handlePost(w http.ResponseWriter, r *http.Request, srv Server) {
 	err := r.ParseForm()
@@ -141,23 +141,23 @@ func handlePost(w http.ResponseWriter, r *http.Request, srv Server) {
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
-	submit, challenge, username, password := r.FormValue("submit"), r.FormValue("challenge"), r.FormValue("username"), r.FormValue("password")
+	submit, challenge, mail, password := r.FormValue("submit"), r.FormValue("challenge"), r.FormValue("mail"), r.FormValue("password")
 	if submit == "cancel" {
 		reject(w, r, srv, challenge, "cancelled", "login was cancelled by the user")
 		return
 	}
-	if username == "" || password == "" {
-		renderLoginForm(w, challenge, "Username or Password not set.")
+	if mail == "" || password == "" {
+		renderLoginForm(w, challenge, "Mail or Password not set.")
 		return
 	}
-	u, err := srv.Database().FindUserByName(username)
+	u, err := srv.Database().FindUserByMail(mail)
 	if err != nil {
-		renderLoginForm(w, challenge, fmt.Sprintf("User '%s' not found.", username))
+		renderLoginForm(w, challenge, fmt.Sprintf("User '%s' not found.", mail))
 		return
 	}
 	err = u.ValidatePassword(password)
 	if err != nil {
-		renderLoginForm(w, challenge, fmt.Sprintf("Invalid password for user '%s'.", username))
+		renderLoginForm(w, challenge, fmt.Sprintf("Invalid password for user '%s'.", mail))
 		return
 	}
 	accept(w, r, srv, challenge, u.ID.Hex())

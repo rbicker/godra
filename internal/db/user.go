@@ -13,7 +13,7 @@ import (
 // User represents a user document.
 type User struct {
 	ID       primitive.ObjectID `bson:"_id,omitempty"`
-	Username string             `bson:"username"`
+	Mail     string             `bson:"mail"`
 	Password string             `bson:"password"`
 	Roles    []string           `bson:"roles"`
 }
@@ -27,16 +27,16 @@ func (u *User) ValidatePassword(plainPassword string) error {
 	return nil
 }
 
-// FindUserByName searches for a user with the given username.
-func (MGO) FindUserByName(username string) (*User, error) {
+// FindUserByMail searches for a user with the given mail address.
+func (MGO) FindUserByMail(mail string) (*User, error) {
 	data := &User{}
 	filter := bson.M{
-		"username": username,
+		"mail": mail,
 	}
 	res := col.FindOne(context.Background(), filter)
 	err := res.Decode(data)
 	if err == mongo.ErrNoDocuments {
-		return nil, fmt.Errorf("unable to find user with username: %v", username)
+		return nil, fmt.Errorf("unable to find user with mail '%v'", mail)
 	}
 	if err != nil {
 		return nil, err

@@ -73,7 +73,7 @@ func (c Client) AcceptLoginRequest(challenge string, remember bool, rememberFor 
 	}
 	var resBody acceptLoginRequestResponse
 	if err = json.NewDecoder(res.Body).Decode(&resBody); err != nil {
-		return nil, fmt.Errorf("could not decode response body: %w",err)
+		return nil, fmt.Errorf("could not decode response body: %w", err)
 	}
 	return resBody, nil
 }
@@ -174,7 +174,7 @@ func (c Client) AcceptConsentRequest(challenge string, remember bool, rememberFo
 	}
 	var resBody acceptConsentRequestResponse
 	if err = json.NewDecoder(res.Body).Decode(&resBody); err != nil {
-		return nil, fmt.Errorf("could not decode response body: %w",err)
+		return nil, fmt.Errorf("could not decode response body: %w", err)
 	}
 	return resBody, nil
 }
@@ -220,7 +220,7 @@ func (c Client) AcceptLogoutRequest(challenge string) (AcceptLogoutRequestRespon
 	}
 	var resBody acceptConsentRequestResponse
 	if err = json.NewDecoder(res.Body).Decode(&resBody); err != nil {
-		return nil, fmt.Errorf("could not decode response body: %w",err)
+		return nil, fmt.Errorf("could not decode response body: %w", err)
 	}
 	return resBody, nil
 }

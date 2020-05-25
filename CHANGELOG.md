@@ -6,7 +6,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.2.0] - 2020-05-24
 ### Changed
-* using mail instead of username from now on
+* using mail or username instead of just username from now on
 
 ## [0.1.0] - 2020-03-14
 ### Added

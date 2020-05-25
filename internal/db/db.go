@@ -14,7 +14,7 @@ import (
 type Database interface {
 	Connect() error
 	Disconnect() error
-	FindUserByMail(string) (*User, error)
+	FindUserByUsernameOrMail(string) (*User, error)
 	FindUserByID(string) (*User, error)
 }
 

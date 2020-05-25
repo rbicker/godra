@@ -27,16 +27,19 @@ func (u *User) ValidatePassword(plainPassword string) error {
 	return nil
 }
 
-// FindUserByMail searches for a user with the given mail address.
-func (MGO) FindUserByMail(mail string) (*User, error) {
+// FindUserByUsernameOrMail searches for a user which has the given string as username or mail address.
+func (MGO) FindUserByUsernameOrMail(s string) (*User, error) {
 	data := &User{}
 	filter := bson.M{
-		"mail": mail,
+		"$or": []bson.M{
+			{"username": s},
+			{"mail": s},
+		},
 	}
 	res := col.FindOne(context.Background(), filter)
 	err := res.Decode(data)
 	if err == mongo.ErrNoDocuments {
-		return nil, fmt.Errorf("unable to find user with mail '%v'", mail)
+		return nil, fmt.Errorf("unable to find user '%s'", s)
 	}
 	if err != nil {
 		return nil, err
@@ -55,7 +58,7 @@ func (MGO) FindUserByID(id string) (*User, error) {
 	res := col.FindOne(context.Background(), filter)
 	err = res.Decode(data)
 	if err == mongo.ErrNoDocuments {
-		return nil, fmt.Errorf("unable to find user with id: %v", id)
+		return nil, fmt.Errorf("unable to find user with id: %s", id)
 	}
 	if err != nil {
 		return nil, err

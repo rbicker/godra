@@ -141,23 +141,23 @@ func handlePost(w http.ResponseWriter, r *http.Request, srv Server) {
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
-	submit, challenge, mail, password := r.FormValue("submit"), r.FormValue("challenge"), r.FormValue("mail"), r.FormValue("password")
+	submit, challenge, username, password := r.FormValue("submit"), r.FormValue("challenge"), r.FormValue("username"), r.FormValue("password")
 	if submit == "cancel" {
 		reject(w, r, srv, challenge, "cancelled", "login was cancelled by the user")
 		return
 	}
-	if mail == "" || password == "" {
-		renderLoginForm(w, challenge, "Mail or Password not set.")
+	if username == "" || password == "" {
+		renderLoginForm(w, challenge, "Username or Password not set.")
 		return
 	}
-	u, err := srv.Database().FindUserByMail(mail)
+	u, err := srv.Database().FindUserByUsernameOrMail(username)
 	if err != nil {
-		renderLoginForm(w, challenge, fmt.Sprintf("User '%s' not found.", mail))
+		renderLoginForm(w, challenge, fmt.Sprintf("User '%s' not found.", username))
 		return
 	}
 	err = u.ValidatePassword(password)
 	if err != nil {
-		renderLoginForm(w, challenge, fmt.Sprintf("Invalid password for user '%s'.", mail))
+		renderLoginForm(w, challenge, fmt.Sprintf("Invalid password for user '%s'.", username))
 		return
 	}
 	accept(w, r, srv, challenge, u.ID.Hex())

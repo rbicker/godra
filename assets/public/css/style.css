@@ -32,32 +32,32 @@ a:hover {
 }
 
 .input-container {
-  display: -ms-flexbox; /* IE10 */
-  display: flex;
-  width: 100%;
-  margin-bottom: 15px;
+    display: -ms-flexbox; /* IE10 */
+    display: flex;
+    width: 100%;
+    margin-bottom: 15px;
 }
 
  .icon-container {
-  padding: 10px;
-  background: lightgrey;
-  min-width: 40px;
-  text-align: center;
+    padding: 10px;
+    background: lightgrey;
+    min-width: 40px;
+    text-align: center;
 }
 
 .button-container {
-  display: flex;
-  justify-content: center;
+    display: flex;
+    justify-content: center;
 }
 
 .input-field {
-  width: 100%;
-  padding: 10px;
-  outline: none;
+    width: 100%;
+    padding: 10px;
+    outline: none;
 }
 
 .input-field:focus {
-  border: 2px solid dodgerblue;
+    border: 2px solid dodgerblue;
 }
 
 .btn-login {
@@ -70,16 +70,16 @@ a:hover {
 }
 
 .btn {
-  color: white;
-  padding: 15px 20px;
-  border: none;
-  cursor: pointer;
-  width: 49%;
-  opacity: 0.9;
+    color: white;
+    padding: 15px 20px;
+    border: none;
+    cursor: pointer;
+    width: 49%;
+    opacity: 0.9;
 }
 
 .btn:hover {
-  opacity: 1;
+    opacity: 1;
 }
 
 .alert {
@@ -88,51 +88,77 @@ a:hover {
     margin:10px 0;
     padding: 2px 10px;
     vertical-align:middle;
-
 }
 
 /* icons from https://cssicon.space/#/icon/ */
 
+.profile-solid.icon {
+    color: dimgrey;
+    position: absolute;
+    margin-left: 3px;
+    margin-top: 11px;
+    width: 16px;
+    height: 6px;
+    border-left: solid 1px currentColor;
+    border-right: solid 1px currentColor;
+    border-top: solid 1px currentColor;
+    border-bottom: solid 1px transparent;
+    background-color: currentColor;
+    border-radius: 6px 6px 0 0;
+}
+
+.profile-solid.icon:before {
+    content: '';
+    position: absolute;
+    left: 2px;
+    top: -10px;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    border: solid 1px currentColor;
+    background-color: currentColor;
+}
+
 .mail-solid.icon {
-  color: dimgrey;
-  position: absolute;
-  margin-left: 2px;
-  margin-top: 4px;
-  width: 17px;
-  height: 10px;
-  border-radius: 1px;
-  border: solid 1px currentColor;
-  background-color: currentColor;
+    color: dimgrey;
+    position: absolute;
+    margin-left: 2px;
+    margin-top: 4px;
+    width: 17px;
+    height: 10px;
+    border-radius: 1px;
+    border: solid 1px currentColor;
+    background-color: currentColor;
 }
 
 .mail-solid.icon:before {
-  content: '';
-  position: absolute;
-  left: 7px;
-  top: -4px;
-  width: 1px;
-  height: 10px;
-  color: white;
-  background-color: currentColor;
-  -webkit-transform-origin: bottom;
-  transform-origin: bottom;
-  -webkit-transform: rotate(-54deg);
-  transform: rotate(-54deg);
+    content: '';
+    position: absolute;
+    left: 7px;
+    top: -4px;
+    width: 1px;
+    height: 10px;
+    color: white;
+    background-color: currentColor;
+    -webkit-transform-origin: bottom;
+    transform-origin: bottom;
+    -webkit-transform: rotate(-54deg);
+    transform: rotate(-54deg);
 }
 
 .mail-solid.icon:after {
-  content: '';
-  position: absolute;
-  left: 7px;
-  top: -4px;
-  width: 1px;
-  height: 10px;
-  color: white;
-  background-color: currentColor;
-  -webkit-transform-origin: bottom;
-  transform-origin: bottom;
-  -webkit-transform: rotate(54deg);
-  transform: rotate(54deg);
+    content: '';
+    position: absolute;
+    left: 7px;
+    top: -4px;
+    width: 1px;
+    height: 10px;
+    color: white;
+    background-color: currentColor;
+    -webkit-transform-origin: bottom;
+    transform-origin: bottom;
+    -webkit-transform: rotate(54deg);
+    transform: rotate(54deg);
 }
 
 .lock-solid.icon {
@@ -145,8 +171,8 @@ a:hover {
     border-radius: 1px;
     border: solid 1px currentColor;
     background-color: currentColor;
-  }
-  .lock-solid.icon:before {
+}
+.lock-solid.icon:before {
     content: '';
     position: absolute;
     left: 3px;
@@ -157,9 +183,9 @@ a:hover {
     border-top: solid 1px currentColor;
     border-left: solid 1px currentColor;
     border-right: solid 1px currentColor;
-  }
+}
 
-  .navigate-solid.icon {
+.navigate-solid.icon {
     color: #fff;
     position: absolute;
     margin-left: 6px;
@@ -168,9 +194,9 @@ a:hover {
     height: 18px;
     -webkit-transform: rotate(45deg);
             transform: rotate(45deg);
-  }
-  
-  .navigate-solid.icon:before {
+}
+
+.navigate-solid.icon:before {
     content: '';
     position: absolute;
     left: 0;
@@ -181,9 +207,9 @@ a:hover {
     border-bottom: solid 18px currentColor;
     border-left: solid 7px transparent;
     border-right: solid 7px transparent;
-  }
-  
-  .navigate-solid.icon:after {
+}
+
+.navigate-solid.icon:after {
     content: '';
     position: absolute;
     left: 0;
@@ -195,16 +221,16 @@ a:hover {
     border-bottom: solid 5px currentColor;
     border-left: solid 7px transparent;
     border-right: solid 7px transparent;
-  }
+}
 
-  .remove.icon {
+.remove.icon {
     color: #fff;
     position: absolute;
     margin-left: 3px;
     margin-top: 10px;
-  }
-  
-  .remove.icon:before {
+}
+
+.remove.icon:before {
     content: '';
     position: absolute;
     width: 15px;
@@ -212,9 +238,9 @@ a:hover {
     background-color: currentColor;
     -webkit-transform: rotate(45deg);
             transform: rotate(45deg);
-  }
-  
-  .remove.icon:after {
+}
+
+.remove.icon:after {
     content: '';
     position: absolute;
     width: 15px;
@@ -222,4 +248,4 @@ a:hover {
     background-color: currentColor;
     -webkit-transform: rotate(-45deg);
             transform: rotate(-45deg);
-  }
+}

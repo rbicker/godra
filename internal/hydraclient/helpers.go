@@ -63,7 +63,7 @@ func (c *Client) Get(flow, challenge string) (*http.Response, error) {
 // Put sends an "accept" or "deny" request with the given body
 // to hydra, depending on the given action.
 // The flow can be "login", "consent" or "logout".
-func (c *Client) Put (flow, action, challenge string, body []byte) (*http.Response, error) {
+func (c *Client) Put(flow, action, challenge string, body []byte) (*http.Response, error) {
 	if flow != "login" && flow != "consent" && flow != "logout" {
 		return nil, fmt.Errorf("invalid flow: %s", flow)
 	}
